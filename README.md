@@ -1,36 +1,80 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next.js Todo アプリケーション
 
-## Getting Started
+このプロジェクトは、Next.js 15を使用したモダンなTodoアプリケーションです。TypeScriptで実装され、Prisma ORM、NextAuth.js認証、TailwindCSSスタイリングなど、Web開発技術スタックを活用しています。
 
-First, run the development server:
+## 技術スタック
+
+- **フロントエンド**:
+  - Next.js 15.3.2
+  - React 19.0.0
+  - TypeScript 5.x
+  - TailwindCSS 4.x
+  - shadcn/ui コンポーネント
+  - Lucide アイコン
+
+- **バックエンド**:
+  - Next.js API Routes
+  - Prisma ORM 6.8.2
+  - PostgreSQL データベース
+
+- **認証**:
+  - NextAuth.js 5.0.0-beta.28
+
+- **データ管理**:
+  - TanStack React Query 5.76.1
+  - React Hook Form 7.56.4
+  - Zod バリデーション 3.24.4
+
+## 必要条件
+
+- Node.js 20.18.1以上
+- PostgreSQLデータベース
+
+
+### 開発サーバーの起動
+
+開発サーバーを起動します:
 
 ```bash
 npm run dev
-# or
+# または
 yarn dev
-# or
+# または
 pnpm dev
-# or
+# または
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+ブラウザで [http://localhost:3000](http://localhost:3000) を開いて結果を確認します。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+`src/app/page.tsx` を編集することでページの編集を開始できます。ファイルを編集すると、ページは自動的に更新されます。
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 機能
 
-## Learn More
+このTodoアプリケーションは現在開発中で、以下の機能を実装予定です:
 
-To learn more about Next.js, take a look at the following resources:
+- ユーザー認証（サインアップ、ログイン、ログアウト）
+- Todoタスクの作成、読み取り、更新、削除（CRUD操作）
+- タスクのカテゴリ分け
+- 期限日の設定と通知
+- タスクの優先順位付け
+- タスクの検索とフィルタリング
+- レスポンシブデザイン
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## プロジェクト構造
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+next-todo-app/
+├── prisma/              # Prismaスキーマとマイグレーション
+├── public/              # 静的アセット
+├── src/
+│   ├── app/             # Next.jsアプリケーションルーター
+│   ├── components/      # UIコンポーネント
+│   ├── hooks/           # カスタムReactフック
+│   ├── lib/             # ユーティリティ関数
+│   └── types/           # TypeScript型定義
+├── .env.local           # 環境変数
+├── .nvmrc               # Node.jsバージョン
+├── components.json      # shadcn/ui設定
+└── ...                  # その他の設定ファイル
+```
