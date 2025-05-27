@@ -1,12 +1,6 @@
 # Issues
 
 ## Issue #3: 認証システムの実装（NextAuth.js）
-
-**ラベル:** authentication, nextauth, security  
-**担当者:** Aokuma0628  
-**作成日:** 2025-05-18  
-**更新日:** 2025-05-24  
-
 ### 詳細:
 - NextAuth.jsの設定
 - 認証プロバイダーの設定（Email/Password）
@@ -30,12 +24,6 @@
 ---
 
 ## Issue #4: タスクモデルとAPIエンドポイントの実装
-
-**ラベル:** api, backend, validation, typescript  
-**担当者:** Aokuma0628  
-**作成日:** 2025-05-18  
-**更新日:** 2025-05-24  
-
 ### 詳細:
 - タスク関連のAPIルートの実装（作成、取得、更新、削除）
 - カテゴリとタグのAPIルートの実装
@@ -59,12 +47,6 @@
 ---
 
 ## Issue #5: UIコンポーネントとページの実装
-
-**ラベル:** ui, frontend, components, accessibility  
-**担当者:** Aokuma0628  
-**作成日:** 2025-05-18  
-**更新日:** 2025-05-24  
-
 ### 詳細:
 - 共通コンポーネントの実装（ボタン、入力フィールド、モーダル、カード）
 - ページレイアウトの実装（ヘッダー、サイドバー、メインコンテンツ）
@@ -125,12 +107,6 @@ graph TD
 ---
 
 ## Issue #6: 状態管理とデータフェッチングの実装（React Query）
-
-**ラベル:** state-management, react-query, data-fetching, performance  
-**担当者:** Aokuma0628  
-**作成日:** 2025-05-18  
-**更新日:** 2025-05-18  
-
 ### 詳細:
 - React Queryのセットアップ
 - タスク、カテゴリ、タグのクエリとミューテーションの実装
@@ -155,12 +131,6 @@ graph TD
 ---
 
 ## Issue #7: ドラッグ&ドロップ機能の実装
-
-**ラベル:** frontend, drag-and-drop, ux, interactive  
-**担当者:** Aokuma0628  
-**作成日:** 2025-05-18  
-**更新日:** 2025-05-24  
-
 ### 詳細:
 - dnd-kitライブラリの統合
 - タスクのドラッグ&ドロップによる並べ替え機能の実装
@@ -212,5 +182,26 @@ sequenceDiagram
     DB->>API: 更新成功レスポンス
     API->>State: キャッシュを更新
 ```
+
+---
+
+## Issue #16: Linter・Formatter設定の実装（ESLint + Prettier）
+### 詳細:
+- ESLintの設定とルール定義
+- Prettierの設定とフォーマットルール定義
+- TypeScript対応のlinting設定
+- Next.js専用のlintingルール設定
+
+### 技術的アプローチ:
+- ESLintの設定ファイル（`.eslintrc.json`）作成
+- Prettierの設定ファイル（`.prettierrc`）作成
+- TypeScript ESLintプラグインの設定
+- Next.js ESLintプラグインの設定
+- React ESLintプラグインの設定
+- package.jsonにlint・formatスクリプトの追加
+
+### 完了条件:
+- ESLintが正しく設定され、TypeScriptとNext.jsのルールが適用されている
+- Prettierが正しく設定され、コードフォーマットが統一されている
 
 ---
