@@ -5,24 +5,5 @@
   "installCommand": "npm install",
   "framework": "nextjs",
   "outputDirectory": ".next",
-  "regions": ["hnd1"],
-  "env": {
-    "NEXTAUTH_URL": "https://next-todo-app-umber.vercel.app",
-    "DATABASE_URL": "${DATABASE_URL}",
-    "NEXTAUTH_SECRET": "${NEXTAUTH_SECRET}"
-  },
-  "build": {
-    "env": {
-      "NEXTAUTH_URL": "https://next-todo-app-umber.vercel.app",
-      "DATABASE_URL": "${DATABASE_URL}",
-      "NEXTAUTH_SECRET": "${NEXTAUTH_SECRET}"
-    }
-  },
-  "git": {
-    "deploymentEnabled": {
-      "main": true,
-      "development": true,
-      "preview": true
-    }
-  }
+  "regions": ["hnd1"]
 }
