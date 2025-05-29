@@ -62,8 +62,17 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Prismaエラーの詳細ログ
+    if (error instanceof Error) {
+      console.error("エラー詳細:", {
+        name: error.name,
+        message: error.message,
+        stack: error.stack
+      })
+    }
+
     return NextResponse.json(
-      { error: "内部サーバーエラーが発生しました" },
+      { error: "内部サーバーエラーが発生しました", details: error instanceof Error ? error.message : "不明なエラー" },
       { status: 500 }
     )
   }
