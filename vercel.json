@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "prisma generate && DATABASE_URL=$DATABASE_URL prisma migrate deploy && npm run build",
+  "buildCommand": "echo 'DEBUG: DATABASE_URL=' && echo $DATABASE_URL && echo 'DEBUG: Prisma generate開始' && prisma generate && echo 'DEBUG: Prisma migrate開始' && DATABASE_URL=$DATABASE_URL prisma migrate deploy && echo 'DEBUG: Build開始' && npm run build",
   "devCommand": "npm run dev",
   "installCommand": "npm install",
   "framework": "nextjs",
