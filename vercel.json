@@ -1,21 +1,14 @@
 {
   "version": 2,
-  "buildCommand": "npm run build",
+  "buildCommand": "prisma generate && prisma migrate deploy && npm run build",
   "devCommand": "npm run dev",
   "installCommand": "npm install",
   "framework": "nextjs",
   "outputDirectory": ".next",
   "regions": ["hnd1"],
-  "env": {
-    "NEXTAUTH_URL": "https://next-todo-app-umber.vercel.app",
-    "DATABASE_URL": "${DATABASE_URL}",
-    "NEXTAUTH_SECRET": "${NEXTAUTH_SECRET}"
-  },
-  "build": {
-    "env": {
-      "NEXTAUTH_URL": "https://next-todo-app-umber.vercel.app",
-      "DATABASE_URL": "${DATABASE_URL}",
-      "NEXTAUTH_SECRET": "${NEXTAUTH_SECRET}"
+  "functions": {
+    "src/app/api/**/*.ts": {
+      "maxDuration": 60
     }
   },
   "git": {
