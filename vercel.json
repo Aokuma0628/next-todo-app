@@ -1,9 +1,21 @@
 {
   "version": 2,
-  "buildCommand": "echo 'DEBUG: DATABASE_URL=' && echo $DATABASE_URL && echo 'DEBUG: Prisma generate開始' && prisma generate && echo 'DEBUG: Prisma migrate開始' && DATABASE_URL=$DATABASE_URL prisma migrate deploy && echo 'DEBUG: Build開始' && npm run build",
+  "buildCommand": "prisma generate && prisma migrate deploy && npm run build",
   "devCommand": "npm run dev",
   "installCommand": "npm install",
   "framework": "nextjs",
   "outputDirectory": ".next",
-  "regions": ["hnd1"]
+  "regions": ["hnd1"],
+  "functions": {
+    "src/app/api/**/*.ts": {
+      "maxDuration": 60
+    }
+  },
+  "git": {
+    "deploymentEnabled": {
+      "main": true,
+      "development": true,
+      "preview": true
+    }
+  }
 }
