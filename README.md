@@ -5,6 +5,7 @@
 ## 技術スタック
 
 - **フロントエンド**:
+
   - Next.js 15.3.2
   - React 19.0.0
   - TypeScript 5.x
@@ -13,11 +14,13 @@
   - Lucide アイコン
 
 - **バックエンド**:
+
   - Next.js API Routes
   - Prisma ORM 6.8.2
   - PostgreSQL データベース
 
 - **認証**:
+
   - NextAuth.js 5.0.0-beta.28
 
 - **データ管理**:
@@ -29,7 +32,6 @@
 
 - Node.js 20.18.1以上
 - PostgreSQLデータベース
-
 
 ### 開発サーバーの起動
 

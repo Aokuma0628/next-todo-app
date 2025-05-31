@@ -1,15 +1,15 @@
-import { auth } from "@/lib/auth"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import Link from "next/link"
-import { redirect } from "next/navigation"
+import { auth } from '@/lib/auth';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
 export default async function Home() {
-  const session = await auth()
+  const session = await auth();
 
   // 既にログインしている場合はダッシュボードにリダイレクト
   if (session?.user) {
-    redirect("/dashboard")
+    redirect('/dashboard');
   }
 
   return (
@@ -17,9 +17,7 @@ export default async function Home() {
       <div className="container mx-auto px-4 py-16">
         {/* ヘッダー */}
         <header className="text-center mb-16">
-          <h1 className="text-5xl font-bold text-gray-900 mb-4">
-            Next Todo App
-          </h1>
+          <h1 className="text-5xl font-bold text-gray-900 mb-4">Next Todo App</h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             効率的なタスク管理のためのシンプルで使いやすいTodoアプリケーション
           </p>
@@ -51,8 +49,7 @@ export default async function Home() {
             </CardHeader>
             <CardContent>
               <CardDescription>
-                NextAuth.jsを使用した安全な認証システムで、
-                あなたのデータを保護します。
+                NextAuth.jsを使用した安全な認証システムで、 あなたのデータを保護します。
               </CardDescription>
             </CardContent>
           </Card>
@@ -66,8 +63,7 @@ export default async function Home() {
             </CardHeader>
             <CardContent>
               <CardDescription>
-                デスクトップ、タブレット、スマートフォンなど、
-                どのデバイスでも快適に使用できます。
+                デスクトップ、タブレット、スマートフォンなど、 どのデバイスでも快適に使用できます。
               </CardDescription>
             </CardContent>
           </Card>
@@ -78,21 +74,15 @@ export default async function Home() {
           <Card className="max-w-md mx-auto">
             <CardHeader>
               <CardTitle>今すぐ始めましょう</CardTitle>
-              <CardDescription>
-                アカウントを作成してタスク管理を始めましょう
-              </CardDescription>
+              <CardDescription>アカウントを作成してタスク管理を始めましょう</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex flex-col space-y-3">
                 <Button asChild size="lg" className="w-full">
-                  <Link href="/auth/signup">
-                    新規登録
-                  </Link>
+                  <Link href="/auth/signup">新規登録</Link>
                 </Button>
                 <Button asChild variant="outline" size="lg" className="w-full">
-                  <Link href="/auth/signin">
-                    ログイン
-                  </Link>
+                  <Link href="/auth/signin">ログイン</Link>
                 </Button>
               </div>
             </CardContent>
@@ -101,9 +91,7 @@ export default async function Home() {
 
         {/* 技術スタック */}
         <div className="mt-20 text-center">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-8">
-            技術スタック
-          </h2>
+          <h2 className="text-2xl font-semibold text-gray-900 mb-8">技術スタック</h2>
           <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-600">
             <span className="bg-white px-3 py-1 rounded-full border">Next.js 15</span>
             <span className="bg-white px-3 py-1 rounded-full border">TypeScript</span>
@@ -116,5 +104,5 @@ export default async function Home() {
         </div>
       </div>
     </div>
-  )
+  );
 }
