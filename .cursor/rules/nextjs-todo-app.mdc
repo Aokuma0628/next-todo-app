@@ -1,0 +1,228 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Next.js Todo Application Development Rules
+
+You are an expert Next.js developer working on a todo application. Follow these rules strictly when generating, editing, or reviewing code.
+
+## Project Context
+- Next.js 15+ with App Router
+- TypeScript strict mode
+- Prisma ORM for database
+- NextAuth.js for authentication
+- React Hook Form + Zod for form validation
+- Tailwind CSS for styling
+- React Query for state management
+
+## Code Style & Formatting
+
+### Prettier Configuration (Auto-format with these rules)
+```json
+{
+  "printWidth": 100,
+  "tabWidth": 2,
+  "useTabs": false,
+  "semi": true,
+  "singleQuote": true,
+  "trailingComma": "all",
+  "bracketSpacing": true,
+  "arrowParens": "avoid",
+  "endOfLine": "lf",
+  "jsxSingleQuote": false,
+  "bracketSameLine": false
+}
+```
+
+### ESLint Rules to Follow
+- Always fix ESLint errors before submitting code
+- Prefer const over let when possible
+- Remove unused variables (prefix with _ if intentionally unused)
+- Use meaningful variable and function names
+- Avoid any type, use proper TypeScript types
+- Don't import React in JSX files (Next.js handles this)
+
+## TypeScript Guidelines
+
+### Type Definitions
+- Create interface/type definitions in separate files when shared
+- Use strict typing, avoid any
+- Prefer type unions over enums when appropriate
+- Use const assertions for readonly data
+- Export types from a central types/ directory
+
+### Function Signatures
+- Use explicit return types for complex functions
+- Prefer arrow functions for simple callbacks
+- Use function declarations for main component functions
+
+### Example:
+```typescript
+// Good
+interface UserProps {
+  id: string;
+  name: string;
+  email: string;
+}
+
+const UserCard = ({ id, name, email }: UserProps): JSX.Element => {
+  return <div>...</div>;
+};
+
+// Bad
+const UserCard = (props: any) => {
+  return <div>...</div>;
+};
+```
+
+## React/Next.js Best Practices
+
+### Component Structure
+- Use functional components with hooks
+- Keep components small and focused (single responsibility)
+- Extract custom hooks for reusable logic
+- Use React.memo() for expensive components
+
+### Next.js App Router
+- Use proper file-based routing conventions
+- Implement loading.tsx and error.tsx pages
+- Use server components by default, client components when needed
+- Leverage Next.js Image component for images
+
+### State Management
+- Use React Query for server state
+- Use React Hook Form for form state
+- Use React context sparingly for truly global state
+
+## API & Database Guidelines
+
+### API Routes
+- Follow RESTful conventions
+- Use proper HTTP status codes
+- Implement comprehensive error handling
+- Validate requests with Zod schemas
+
+### Database Operations
+- Use Prisma client for all database operations
+- Implement proper error handling
+- Use transactions for related operations
+- Follow database naming conventions (snake_case for tables/columns)
+
+### Example API Route:
+```typescript
+import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+
+const createTodoSchema = z.object({
+  title: z.string().min(1).max(100),
+  description: z.string().optional(),
+});
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const validatedData = createTodoSchema.parse(body);
+    
+    // Database operation here
+    
+    return NextResponse.json({ success: true }, { status: 201 });
+  } catch (error) {
+    return NextResponse.json(
+      { error: 'Invalid request data' },
+      { status: 400 }
+    );
+  }
+}
+```
+
+## File Organization
+
+### Directory Structure
+```
+src/
+├── app/                  # Next.js App Router pages
+├── components/           # Reusable UI components
+│   ├── ui/              # Base UI components (shadcn/ui)
+│   └── ...              # Feature-specific components
+├── lib/                 # Utility functions and configurations
+├── hooks/               # Custom React hooks
+├── types/               # TypeScript type definitions
+└── styles/              # Global styles
+```
+
+### Naming Conventions
+- Files: kebab-case (user-profile.tsx)
+- Components: PascalCase (UserProfile)
+- Functions/variables: camelCase (getCurrentUser)
+- Constants: UPPER_SNAKE_CASE (API_BASE_URL)
+- Types/Interfaces: PascalCase (UserProfile, ApiResponse)
+
+## Import Organization
+```typescript
+// 1. External libraries
+import React from 'react';
+import { NextRequest } from 'next/server';
+
+// 2. Internal modules (absolute imports preferred)
+import { Button } from '@/components/ui/button';
+import { getCurrentUser } from '@/lib/auth';
+
+// 3. Relative imports
+import './component.css';
+```
+
+## Error Handling
+
+### Client-Side
+- Use error boundaries for component-level errors
+- Implement proper loading and error states
+- Show user-friendly error messages
+
+### Server-Side
+- Log errors with sufficient context
+- Return appropriate HTTP status codes
+- Don't expose sensitive information in error messages
+
+## Security Best Practices
+- Validate all user inputs (client AND server-side)
+- Use NextAuth.js for authentication
+- Sanitize data before database operations
+- Implement proper authorization checks
+- Use environment variables for sensitive data
+
+## Performance Optimization
+- Use React.memo() judiciously
+- Implement proper loading states
+- Use Next.js Image component
+- Lazy load components when appropriate
+- Optimize bundle size with dynamic imports
+
+## Testing Guidelines
+- Write unit tests for utility functions
+- Test React components with user interactions
+- Mock external dependencies
+- Maintain reasonable test coverage
+- Use meaningful test descriptions
+
+## Code Review Checklist
+- [ ] Code follows formatting rules (Prettier)
+- [ ] No ESLint errors or warnings
+- [ ] Proper TypeScript typing
+- [ ] Error handling implemented
+- [ ] Performance considered
+- [ ] Security implications reviewed
+- [ ] Tests written/updated
+- [ ] Documentation updated if needed
+
+## Files to Ignore in Code Generation
+- .next/
+- node_modules/
+- .git/
+- dist/
+- build/
+- *.min.js
+- .env.local
+- .env
+
+Always prioritize code quality, maintainability, and user experience in your implementations.

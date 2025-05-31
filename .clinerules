@@ -1,0 +1,394 @@
+# Next.js Todo Application Development Rules for Cline
+
+You are an expert Next.js developer working on a todo application. Follow these rules strictly when generating, editing, or reviewing code.
+
+## Project Context
+- **Framework**: Next.js 15.3.2 with App Router
+- **React**: Version 19.0.0
+- **TypeScript**: Strict mode enabled
+- **Database**: Prisma ORM v6.8.2
+- **Authentication**: NextAuth.js v5.0.0-beta.28 with Prisma adapter
+- **Form Handling**: React Hook Form v7.56.4 + Zod v3.25.28
+- **Styling**: Tailwind CSS v4 + shadcn/ui components
+- **State Management**: TanStack React Query v5.76.1
+- **UI Icons**: Lucide React v0.511.0
+- **Password Hashing**: bcryptjs v3.0.2
+
+## Code Style & Formatting
+
+### Prettier Configuration (EXACTLY as configured)
+```json
+{
+  "printWidth": 100,
+  "tabWidth": 2,
+  "useTabs": false,
+  "semi": true,
+  "singleQuote": true,
+  "trailingComma": "all",
+  "bracketSpacing": true,
+  "arrowParens": "avoid",
+  "endOfLine": "lf",
+  "jsxSingleQuote": false,
+  "bracketSameLine": false
+}
+```
+
+### ESLint Rules (Follow existing config)
+- Fix ESLint errors before submitting code
+- Prefer const over let when possible
+- Remove unused variables (prefix with _ if intentionally unused)
+- Use meaningful variable and function names
+- Avoid `any` type, use proper TypeScript types
+- Don't import React in JSX files (Next.js handles this)
+
+## TypeScript Guidelines
+
+### Strict Configuration
+```json
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "strict": true,
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}
+```
+
+### Type Definitions
+- Create interface/type definitions in `src/types/` directory
+- Use strict typing, avoid `any`
+- Prefer type unions over enums when appropriate
+- Use const assertions for readonly data
+- Export types from `src/types/index.ts`
+
+### Function Signatures
+```typescript
+// Good
+interface UserProps {
+  id: string;
+  name: string;
+  email: string;
+}
+
+const UserCard = ({ id, name, email }: UserProps): JSX.Element => {
+  return <div>...</div>;
+};
+
+// Bad
+const UserCard = (props: any) => {
+  return <div>...</div>;
+};
+```
+
+## Project Structure (EXACT current structure)
+
+```
+src/
+├── app/                  # Next.js App Router pages
+│   ├── page.tsx         # Home page
+│   ├── layout.tsx       # Root layout
+│   ├── globals.css      # Global styles
+│   ├── api/             # API routes
+│   ├── auth/            # Authentication pages
+│   └── dashboard/       # Dashboard pages
+├── components/          # Reusable UI components
+│   ├── ui/             # shadcn/ui base components
+│   └── auth/           # Authentication components
+├── lib/                # Utility functions and configurations
+├── hooks/              # Custom React hooks
+├── types/              # TypeScript type definitions
+├── providers/          # React context providers
+└── middleware.ts       # Next.js middleware
+```
+
+### Naming Conventions
+- **Files**: kebab-case (`user-profile.tsx`)
+- **Components**: PascalCase (`UserProfile`)
+- **Functions/variables**: camelCase (`getCurrentUser`)
+- **Constants**: UPPER_SNAKE_CASE (`API_BASE_URL`)
+- **Types/Interfaces**: PascalCase (`UserProfile`, `ApiResponse`)
+
+## React/Next.js Best Practices
+
+### Component Structure
+- Use functional components with hooks
+- Keep components small and focused (single responsibility)
+- Extract custom hooks for reusable logic in `src/hooks/`
+- Use `React.memo()` for expensive components
+
+### Next.js App Router (v15)
+- Use proper file-based routing conventions
+- Implement `loading.tsx` and `error.tsx` pages
+- Use server components by default, client components when needed
+- Leverage Next.js Image component for images
+- Use middleware for authentication checks
+
+### State Management
+- **Server State**: TanStack React Query v5.76.1
+- **Form State**: React Hook Form v7.56.4
+- **Global State**: React context in `src/providers/`
+
+## Authentication & Security
+
+### NextAuth.js v5.0.0-beta.28 Configuration
+- Use Prisma adapter (`@auth/prisma-adapter`)
+- Implement proper session management
+- Use bcryptjs for password hashing
+- Middleware for route protection
+
+### Security Best Practices
+- Validate all inputs with Zod schemas
+- Sanitize data before database operations
+- Implement proper authorization checks
+- Use environment variables for sensitive data
+- Never expose sensitive information in error messages
+
+## Database Operations (Prisma v6.8.2)
+
+### Best Practices
+- Use Prisma client for all database operations
+- Implement proper error handling
+- Use transactions for related operations
+- Follow database naming conventions (snake_case)
+
+### Example Pattern
+```typescript
+import { prisma } from '@/lib/prisma';
+import { z } from 'zod';
+
+const createTodoSchema = z.object({
+  title: z.string().min(1).max(100),
+  description: z.string().optional(),
+});
+
+export async function createTodo(data: z.infer<typeof createTodoSchema>) {
+  try {
+    const validatedData = createTodoSchema.parse(data);
+    
+    const todo = await prisma.todo.create({
+      data: validatedData,
+    });
+    
+    return { success: true, data: todo };
+  } catch (error) {
+    console.error('Error creating todo:', error);
+    throw new Error('Failed to create todo');
+  }
+}
+```
+
+## API Routes (App Router)
+
+### Structure
+```typescript
+import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+
+const requestSchema = z.object({
+  title: z.string().min(1).max(100),
+});
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const validatedData = requestSchema.parse(body);
+    
+    // Database operation here
+    
+    return NextResponse.json({ success: true }, { status: 201 });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { error: 'Invalid request data', details: error.errors },
+        { status: 400 }
+      );
+    }
+    
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+```
+
+## Form Handling
+
+### React Hook Form + Zod Pattern
+```typescript
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+
+const todoSchema = z.object({
+  title: z.string().min(1, 'Title is required').max(100),
+  description: z.string().optional(),
+});
+
+type TodoFormData = z.infer<typeof todoSchema>;
+
+export function TodoForm() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<TodoFormData>({
+    resolver: zodResolver(todoSchema),
+  });
+
+  const onSubmit = (data: TodoFormData) => {
+    // Handle form submission
+  };
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      {/* Form fields */}
+    </form>
+  );
+}
+```
+
+## Styling Guidelines
+
+### Tailwind CSS v4 + shadcn/ui
+- Use shadcn/ui components from `src/components/ui/`
+- Follow Tailwind utility-first approach
+- Use CSS variables for theming
+- Implement responsive design with Tailwind breakpoints
+
+### Component Pattern
+```typescript
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+
+interface CardProps {
+  className?: string;
+  children: React.ReactNode;
+}
+
+export function Card({ className, children }: CardProps) {
+  return (
+    <div className={cn('rounded-lg border bg-card p-6', className)}>
+      {children}
+    </div>
+  );
+}
+```
+
+## Import Organization
+```typescript
+// 1. External libraries
+import React from 'react';
+import { NextRequest } from 'next/server';
+
+// 2. Internal modules (absolute imports preferred)
+import { Button } from '@/components/ui/button';
+import { getCurrentUser } from '@/lib/auth';
+
+// 3. Relative imports
+import './component.css';
+```
+
+## Error Handling
+
+### Client-Side
+- Use error boundaries for component-level errors
+- Implement proper loading and error states with React Query
+- Show user-friendly error messages
+- Use Zod for runtime validation
+
+### Server-Side
+- Log errors with sufficient context
+- Return appropriate HTTP status codes
+- Don't expose sensitive information in error messages
+- Use try-catch blocks consistently
+
+## Performance Optimization
+
+### React Query Configuration
+```typescript
+import { QueryClient } from '@tanstack/react-query';
+
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+```
+
+### Next.js Optimization
+- Use `React.memo()` judiciously
+- Implement proper loading states
+- Use Next.js Image component
+- Lazy load components when appropriate
+- Optimize bundle size with dynamic imports
+
+## Development Scripts
+
+### Available Commands
+- `npm run dev` - Start development server
+- `npm run build` - Build for production (includes Prisma generation and migration)
+- `npm run lint` - Run ESLint
+- `npm run lint:fix` - Fix ESLint errors
+- `npm run format` - Format code with Prettier
+- `npm run format:check` - Check Prettier formatting
+
+### Pre-commit Hooks (Husky + lint-staged)
+- Automatic ESLint fixing
+- Automatic Prettier formatting
+- Applied to `*.{js,jsx,ts,tsx,json,md}` files
+
+## Environment Setup
+
+### Required Environment Variables
+```env
+# Database
+DATABASE_URL="your-database-url"
+
+# NextAuth
+NEXTAUTH_SECRET="your-secret"
+NEXTAUTH_URL="http://localhost:3000"
+
+# Add other environment variables as needed
+```
+
+### Node.js Version
+- Use Node.js 18.x or later (check `.nvmrc` file)
+
+## Code Review Checklist
+- [ ] Code follows Prettier formatting (auto-formatted)
+- [ ] No ESLint errors or warnings
+- [ ] Proper TypeScript typing (no `any`)
+- [ ] Error handling implemented
+- [ ] Zod validation for user inputs
+- [ ] React Query for server state management
+- [ ] Proper file organization in `src/` structure
+- [ ] NextAuth.js for authentication
+- [ ] Prisma for database operations
+- [ ] Tests written/updated (when test framework is added)
+
+## Files to Always Ignore
+- `.next/`
+- `node_modules/`
+- `.git/`
+- `dist/`
+- `build/`
+- `*.min.js`
+- `.env.local`
+- `.env`
+
+## Key Dependencies Version Compatibility
+- **Next.js**: 15.3.2
+- **React**: 19.0.0  
+- **TypeScript**: 5.x
+- **Prisma**: 6.8.2
+- **NextAuth**: 5.0.0-beta.28
+- **TanStack React Query**: 5.76.1
+- **Tailwind CSS**: 4.x
+
+Always prioritize code quality, maintainability, type safety, and user experience in your implementations. Follow the existing project patterns and maintain consistency with the established codebase structure. 
