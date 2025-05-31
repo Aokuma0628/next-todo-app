@@ -14,6 +14,17 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
   {
+    // Ignore build and generated files
+    ignores: [
+      ".next/**",
+      "node_modules/**",
+      ".git/**",
+      "dist/**",
+      "build/**",
+      "*.min.js",
+    ],
+  },
+  {
     files: ["**/*.{js,jsx,ts,tsx}"],
     plugins: {
       "@typescript-eslint": eslintPluginTypescript,
@@ -30,14 +41,20 @@ const eslintConfig = [
       },
     },
     rules: {
+      // Prettier formatting
       "prettier/prettier": "error",
+       
+      // TypeScript rules
       "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
       "@typescript-eslint/no-explicit-any": "warn",
       "@typescript-eslint/explicit-function-return-type": "off",
       "@typescript-eslint/explicit-module-boundary-types": "off",
-      "react/react-in-jsx-scope": "off",
+       
+      // React rules (inherited from Next.js core-web-vitals)
+      "react/react-in-jsx-scope": "off", // Not needed in Next.js 13+
     },
   },
+  // Next.js recommended configuration
   ...compat.extends("next/core-web-vitals"),
 ];
 
