@@ -1,96 +1,107 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import Link from "next/link"
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import Link from 'next/link';
 
-const registerSchema = z.object({
-  name: z.string().min(1, "名前は必須です"),
-  email: z.string().email("有効なメールアドレスを入力してください"),
-  password: z.string().min(6, "パスワードは6文字以上である必要があります"),
-  confirmPassword: z.string(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "パスワードが一致しません",
-  path: ["confirmPassword"],
-})
+const registerSchema = z
+  .object({
+    name: z.string().min(1, '名前は必須です'),
+    email: z.string().email('有効なメールアドレスを入力してください'),
+    password: z.string().min(6, 'パスワードは6文字以上である必要があります'),
+    confirmPassword: z.string(),
+  })
+  .refine(data => data.password === data.confirmPassword, {
+    message: 'パスワードが一致しません',
+    path: ['confirmPassword'],
+  });
 
-type RegisterFormData = z.infer<typeof registerSchema>
+type RegisterFormData = z.infer<typeof registerSchema>;
 
 export function RegisterForm() {
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
-  const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+  const router = useRouter();
 
   const form = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
+      name: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
     },
-  })
+  });
 
   const onSubmit = async (data: RegisterFormData) => {
-    setIsLoading(true)
-    setError(null)
+    setIsLoading(true);
+    setError(null);
 
     try {
-      const response = await fetch("/api/auth/register", {
-        method: "POST",
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           name: data.name,
           email: data.email,
           password: data.password,
         }),
-      })
+      });
 
-      const result = await response.json()
+      const result = await response.json();
 
       if (!response.ok) {
-        setError(result.error || "登録中にエラーが発生しました")
-        return
+        setError(result.error || '登録中にエラーが発生しました');
+        return;
       }
 
-      setSuccess(true)
+      setSuccess(true);
       setTimeout(() => {
-        router.push("/auth/signin")
-      }, 2000)
-
+        router.push('/auth/signin');
+      }, 2000);
     } catch (error) {
-      console.error("登録エラー:", error)
-      setError("登録中にエラーが発生しました")
+      console.error('登録エラー:', error);
+      setError('登録中にエラーが発生しました');
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   if (success) {
     return (
       <Card className="w-full max-w-md">
         <CardContent className="pt-6">
           <div className="text-center space-y-4">
-            <div className="text-green-600 text-lg font-semibold">
-              ✓ 登録が完了しました！
-            </div>
-            <p className="text-gray-600">
-              ログインページに移動しています...
-            </p>
+            <div className="text-green-600 text-lg font-semibold">✓ 登録が完了しました！</div>
+            <p className="text-gray-600">ログインページに移動しています...</p>
           </div>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
@@ -111,12 +122,7 @@ export function RegisterForm() {
                 <FormItem>
                   <FormLabel>名前</FormLabel>
                   <FormControl>
-                    <Input
-                      {...field}
-                      type="text"
-                      placeholder="山田太郎"
-                      disabled={isLoading}
-                    />
+                    <Input {...field} type="text" placeholder="山田太郎" disabled={isLoading} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -176,29 +182,21 @@ export function RegisterForm() {
                 </FormItem>
               )}
             />
-            {error && (
-              <div className="text-sm text-red-600 text-center">
-                {error}
-              </div>
-            )}
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={isLoading}
-            >
-              {isLoading ? "登録中..." : "登録"}
+            {error && <div className="text-sm text-red-600 text-center">{error}</div>}
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? '登録中...' : '登録'}
             </Button>
           </form>
         </Form>
       </CardContent>
       <CardFooter className="flex justify-center">
         <p className="text-sm text-gray-600">
-          既にアカウントをお持ちの方は{" "}
+          既にアカウントをお持ちの方は{' '}
           <Link href="/auth/signin" className="text-blue-600 hover:underline">
             こちらからログイン
           </Link>
         </p>
       </CardFooter>
     </Card>
-  )
+  );
 }
