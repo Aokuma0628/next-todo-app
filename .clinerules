@@ -1,22 +1,22 @@
-# Next.js Todo Application Development Rules for Cline
+# Next.js Todoアプリケーション開発ルール（Cline用）
 
-You are an expert Next.js developer working on a todo application. Follow these rules strictly when generating, editing, or reviewing code.
+あなたはTodoアプリケーションに取り組むエキスパートNext.js開発者です。コードの生成、編集、レビューの際は、これらのルールを厳密に守ってください。
 
-## Project Context
-- **Framework**: Next.js 15.3.2 with App Router
+## プロジェクト概要
+- **フレームワーク**: Next.js 15.3.2 with App Router
 - **React**: Version 19.0.0
 - **TypeScript**: Strict mode enabled
-- **Database**: Prisma ORM v6.8.2
-- **Authentication**: NextAuth.js v5.0.0-beta.28 with Prisma adapter
-- **Form Handling**: React Hook Form v7.56.4 + Zod v3.25.28
-- **Styling**: Tailwind CSS v4 + shadcn/ui components
-- **State Management**: TanStack React Query v5.76.1
-- **UI Icons**: Lucide React v0.511.0
-- **Password Hashing**: bcryptjs v3.0.2
+- **データベース**: Prisma ORM v6.8.2
+- **認証**: NextAuth.js v5.0.0-beta.28 with Prisma adapter
+- **フォーム処理**: React Hook Form v7.56.4 + Zod v3.25.28
+- **スタイリング**: Tailwind CSS v4 + shadcn/ui components
+- **状態管理**: TanStack React Query v5.76.1
+- **UIアイコン**: Lucide React v0.511.0
+- **パスワードハッシュ化**: bcryptjs v3.0.2
 
-## Code Style & Formatting
+## コードスタイル & フォーマット
 
-### Prettier Configuration (EXACTLY as configured)
+### Prettier設定（設定通りに正確に）
 ```json
 {
   "printWidth": 100,
@@ -33,17 +33,17 @@ You are an expert Next.js developer working on a todo application. Follow these 
 }
 ```
 
-### ESLint Rules (Follow existing config)
-- Fix ESLint errors before submitting code
-- Prefer const over let when possible
-- Remove unused variables (prefix with _ if intentionally unused)
-- Use meaningful variable and function names
-- Avoid `any` type, use proper TypeScript types
-- Don't import React in JSX files (Next.js handles this)
+### ESLintルール（既存設定に従う）
+- コード提出前にESLintエラーを修正する
+- 可能な限りletよりもconstを使用する
+- 未使用の変数を削除する（意図的に未使用の場合は_を接頭辞にする）
+- 意味のある変数名と関数名を使用する
+- `any`型を避け、適切なTypeScript型を使用する
+- JSXファイルでReactをインポートしない（Next.jsが自動処理）
 
-## TypeScript Guidelines
+## TypeScriptガイドライン
 
-### Strict Configuration
+### Strict設定
 ```json
 {
   "compilerOptions": {
@@ -56,16 +56,16 @@ You are an expert Next.js developer working on a todo application. Follow these 
 }
 ```
 
-### Type Definitions
-- Create interface/type definitions in `src/types/` directory
-- Use strict typing, avoid `any`
-- Prefer type unions over enums when appropriate
-- Use const assertions for readonly data
-- Export types from `src/types/index.ts`
+### 型定義
+- `src/types/`ディレクトリにinterface/type定義を作成する
+- 厳密な型付けを使用し、`any`を避ける
+- 適切な場合はenumよりもtype unionsを使用する
+- 読み取り専用データにはconst assertionsを使用する
+- `src/types/index.ts`から型をエクスポートする
 
-### Function Signatures
+### 関数シグネチャ
 ```typescript
-// Good
+// 良い例
 interface UserProps {
   id: string;
   name: string;
@@ -76,84 +76,128 @@ const UserCard = ({ id, name, email }: UserProps): JSX.Element => {
   return <div>...</div>;
 };
 
-// Bad
+// 悪い例
 const UserCard = (props: any) => {
   return <div>...</div>;
 };
 ```
 
-## Project Structure (EXACT current structure)
+## プロジェクト構造（現在の構造に正確に）
 
 ```
 src/
-├── app/                  # Next.js App Router pages
-│   ├── page.tsx         # Home page
-│   ├── layout.tsx       # Root layout
-│   ├── globals.css      # Global styles
-│   ├── api/             # API routes
-│   ├── auth/            # Authentication pages
-│   └── dashboard/       # Dashboard pages
-├── components/          # Reusable UI components
-│   ├── ui/             # shadcn/ui base components
-│   └── auth/           # Authentication components
-├── lib/                # Utility functions and configurations
-├── hooks/              # Custom React hooks
-├── types/              # TypeScript type definitions
-├── providers/          # React context providers
-└── middleware.ts       # Next.js middleware
+├── app/                  # Next.js App Routerページ
+│   ├── page.tsx         # ホームページ
+│   ├── layout.tsx       # ルートレイアウト
+│   ├── globals.css      # グローバルスタイル
+│   ├── api/             # APIルート
+│   ├── auth/            # 認証ページ
+│   └── dashboard/       # ダッシュボードページ
+├── components/          # 再利用可能なUIコンポーネント
+│   ├── ui/             # shadcn/uiベースコンポーネント
+│   └── auth/           # 認証コンポーネント
+├── lib/                # ユーティリティ関数と設定
+├── hooks/              # カスタムReactフック
+├── types/              # TypeScript型定義
+├── providers/          # Reactコンテキストプロバイダー
+└── middleware.ts       # Next.jsミドルウェア
 ```
 
-### Naming Conventions
-- **Files**: kebab-case (`user-profile.tsx`)
-- **Components**: PascalCase (`UserProfile`)
-- **Functions/variables**: camelCase (`getCurrentUser`)
-- **Constants**: UPPER_SNAKE_CASE (`API_BASE_URL`)
-- **Types/Interfaces**: PascalCase (`UserProfile`, `ApiResponse`)
+### 命名規則
+- **ファイル**: kebab-case (`user-profile.tsx`)
+- **コンポーネント**: PascalCase (`UserProfile`)
+- **関数/変数**: camelCase (`getCurrentUser`)
+- **定数**: UPPER_SNAKE_CASE (`API_BASE_URL`)
+- **型/インターフェース**: PascalCase (`UserProfile`, `ApiResponse`)
 
-## React/Next.js Best Practices
+## React/Next.jsベストプラクティス
 
-### Component Structure
-- Use functional components with hooks
-- Keep components small and focused (single responsibility)
-- Extract custom hooks for reusable logic in `src/hooks/`
-- Use `React.memo()` for expensive components
+### コンポーネント構造
+- フックを使用した関数コンポーネントを使用する
+- コンポーネントを小さく集中的に保つ（単一責任）
+- `src/hooks/`で再利用可能なロジックのためのカスタムフックを抽出する
+- 重いコンポーネントには`React.memo()`を使用する
+
+## 単一責任原則（SRP）
+
+### 核となる原則
+- **各モジュール、クラス、または関数は変更の理由を1つだけ持つべき**
+- **異なるファイルと関数に関心事を分離する**
+- **同じモジュール内で異なるタイプの機能を混在させない**
+
+### ファイル組織ガイドライン
+- **認証関数**: `src/lib/auth.ts`に保存（NextAuth設定、セッション管理、認証ヘルパー）
+- **APIユーティリティ**: `src/lib/api-utils.ts`に保存（エラーハンドリング、レスポンス形式、ページネーション）
+- **データベース操作**: `src/lib/prisma.ts`または特定のサービスファイルに保存
+- **バリデーションスキーマ**: `src/lib/validations.ts`に保存
+- **型定義**: `src/types/index.ts`に保存
+
+### 関数の責任
+```typescript
+// 良い例 - 単一責任
+// auth.ts - 認証関連のみ
+export async function requireAuth(request: NextRequest) {
+  // 認証ロジックのみを処理
+}
+
+// api-utils.ts - APIユーティリティ関連のみ
+export function createErrorResponse(message: string, status: number) {
+  // レスポンス形式のみを処理
+}
+
+// 悪い例 - 混在した責任
+// 同じファイルで認証と一般的なユーティリティを混在させない
+export async function requireAuth(request: NextRequest) { /* 認証ロジック */ }
+export function formatDate(date: Date) { /* ユーティリティロジック */ }
+```
+
+### APIルート構造
+- **各ルートファイルは1つのリソースに集中する**（例：tasks、categories、tags）
+- **共通操作には共有ユーティリティを使用する**（認証、エラーハンドリング、バリデーション）
+- **ビジネスロジックをHTTP処理から分離する**
+
+### SRPの利点
+- **メンテナンスが容易**: 1つの関心事への変更が他に影響しない
+- **テスト性の向上**: 各関数に明確で集中した目的がある
+- **再利用性の向上**: 明確に定義された関数はアプリケーション全体で再利用可能
+- **コード組織の明確化**: 開発者が関連するコードを素早く見つけられる
 
 ### Next.js App Router (v15)
-- Use proper file-based routing conventions
-- Implement `loading.tsx` and `error.tsx` pages
-- Use server components by default, client components when needed
-- Leverage Next.js Image component for images
-- Use middleware for authentication checks
+- 適切なファイルベースルーティング規則を使用する
+- `loading.tsx`と`error.tsx`ページを実装する
+- デフォルトでサーバーコンポーネント、必要時にクライアントコンポーネントを使用
+- 画像にはNext.js Imageコンポーネントを活用する
+- 認証チェックにはミドルウェアを使用する
 
-### State Management
-- **Server State**: TanStack React Query v5.76.1
-- **Form State**: React Hook Form v7.56.4
-- **Global State**: React context in `src/providers/`
+### 状態管理
+- **サーバー状態**: TanStack React Query v5.76.1
+- **フォーム状態**: React Hook Form v7.56.4
+- **グローバル状態**: `src/providers/`のReactコンテキスト
 
-## Authentication & Security
+## 認証 & セキュリティ
 
-### NextAuth.js v5.0.0-beta.28 Configuration
-- Use Prisma adapter (`@auth/prisma-adapter`)
-- Implement proper session management
-- Use bcryptjs for password hashing
-- Middleware for route protection
+### NextAuth.js v5.0.0-beta.28設定
+- Prismaアダプター（`@auth/prisma-adapter`）を使用する
+- 適切なセッション管理を実装する
+- パスワードハッシュ化にbcryptjsを使用する
+- ルート保護にミドルウェアを使用する
 
-### Security Best Practices
-- Validate all inputs with Zod schemas
-- Sanitize data before database operations
-- Implement proper authorization checks
-- Use environment variables for sensitive data
-- Never expose sensitive information in error messages
+### セキュリティベストプラクティス
+- Zodスキーマですべての入力を検証する
+- データベース操作前にデータをサニタイズする
+- 適切な認可チェックを実装する
+- 機密データには環境変数を使用する
+- エラーメッセージで機密情報を公開しない
 
-## Database Operations (Prisma v6.8.2)
+## データベース操作（Prisma v6.8.2）
 
-### Best Practices
-- Use Prisma client for all database operations
-- Implement proper error handling
-- Use transactions for related operations
-- Follow database naming conventions (snake_case)
+### ベストプラクティス
+- すべてのデータベース操作にPrismaクライアントを使用する
+- 適切なエラーハンドリングを実装する
+- 関連操作にはトランザクションを使用する
+- データベース命名規則に従う（snake_case）
 
-### Example Pattern
+### 例パターン
 ```typescript
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
@@ -173,15 +217,15 @@ export async function createTodo(data: z.infer<typeof createTodoSchema>) {
     
     return { success: true, data: todo };
   } catch (error) {
-    console.error('Error creating todo:', error);
-    throw new Error('Failed to create todo');
+    console.error('Todo作成エラー:', error);
+    throw new Error('Todoの作成に失敗しました');
   }
 }
 ```
 
-## API Routes (App Router)
+## APIルート（App Router）
 
-### Structure
+### 構造
 ```typescript
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
@@ -195,35 +239,35 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const validatedData = requestSchema.parse(body);
     
-    // Database operation here
+    // ここにデータベース操作
     
     return NextResponse.json({ success: true }, { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Invalid request data', details: error.errors },
+        { error: '不正なリクエストデータ', details: error.errors },
         { status: 400 }
       );
     }
     
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: '内部サーバーエラー' },
       { status: 500 }
     );
   }
 }
 ```
 
-## Form Handling
+## フォーム処理
 
-### React Hook Form + Zod Pattern
+### React Hook Form + Zodパターン
 ```typescript
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 
 const todoSchema = z.object({
-  title: z.string().min(1, 'Title is required').max(100),
+  title: z.string().min(1, 'タイトルは必須です').max(100),
   description: z.string().optional(),
 });
 
@@ -239,26 +283,26 @@ export function TodoForm() {
   });
 
   const onSubmit = (data: TodoFormData) => {
-    // Handle form submission
+    // フォーム送信処理
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      {/* Form fields */}
+      {/* フォームフィールド */}
     </form>
   );
 }
 ```
 
-## Styling Guidelines
+## スタイリングガイドライン
 
 ### Tailwind CSS v4 + shadcn/ui
-- Use shadcn/ui components from `src/components/ui/`
-- Follow Tailwind utility-first approach
-- Use CSS variables for theming
-- Implement responsive design with Tailwind breakpoints
+- `src/components/ui/`のshadcn/uiコンポーネントを使用する
+- Tailwindのutility-firstアプローチに従う
+- テーマにCSS変数を使用する
+- Tailwindブレークポイントでレスポンシブデザインを実装する
 
-### Component Pattern
+### コンポーネントパターン
 ```typescript
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -277,102 +321,102 @@ export function Card({ className, children }: CardProps) {
 }
 ```
 
-## Import Organization
+## インポート組織
 ```typescript
-// 1. External libraries
+// 1. 外部ライブラリ
 import React from 'react';
 import { NextRequest } from 'next/server';
 
-// 2. Internal modules (absolute imports preferred)
+// 2. 内部モジュール（絶対インポート推奨）
 import { Button } from '@/components/ui/button';
 import { getCurrentUser } from '@/lib/auth';
 
-// 3. Relative imports
+// 3. 相対インポート
 import './component.css';
 ```
 
-## Error Handling
+## エラーハンドリング
 
-### Client-Side
-- Use error boundaries for component-level errors
-- Implement proper loading and error states with React Query
-- Show user-friendly error messages
-- Use Zod for runtime validation
+### クライアントサイド
+- コンポーネントレベルのエラーにはエラーバウンダリを使用する
+- React Queryで適切なローディングとエラー状態を実装する
+- ユーザーフレンドリーなエラーメッセージを表示する
+- ランタイム検証にZodを使用する
 
-### Server-Side
-- Log errors with sufficient context
-- Return appropriate HTTP status codes
-- Don't expose sensitive information in error messages
-- Use try-catch blocks consistently
+### サーバーサイド
+- 十分なコンテキストでエラーをログに記録する
+- 適切なHTTPステータスコードを返す
+- エラーメッセージで機密情報を公開しない
+- try-catchブロックを一貫して使用する
 
-## Performance Optimization
+## パフォーマンス最適化
 
-### React Query Configuration
+### React Query設定
 ```typescript
 import { QueryClient } from '@tanstack/react-query';
 
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes
+      staleTime: 1000 * 60 * 5, // 5分
       refetchOnWindowFocus: false,
     },
   },
 });
 ```
 
-### Next.js Optimization
-- Use `React.memo()` judiciously
-- Implement proper loading states
-- Use Next.js Image component
-- Lazy load components when appropriate
-- Optimize bundle size with dynamic imports
+### Next.js最適化
+- `React.memo()`を適切に使用する
+- 適切なローディング状態を実装する
+- Next.js Imageコンポーネントを使用する
+- 適切な場合にコンポーネントを遅延読み込みする
+- 動的インポートでバンドルサイズを最適化する
 
-## Development Scripts
+## 開発スクリプト
 
-### Available Commands
-- `npm run dev` - Start development server
-- `npm run build` - Build for production (includes Prisma generation and migration)
-- `npm run lint` - Run ESLint
-- `npm run lint:fix` - Fix ESLint errors
-- `npm run format` - Format code with Prettier
-- `npm run format:check` - Check Prettier formatting
+### 利用可能なコマンド
+- `npm run dev` - 開発サーバーを開始
+- `npm run build` - 本番用ビルド（Prisma生成とマイグレーションを含む）
+- `npm run lint` - ESLintを実行
+- `npm run lint:fix` - ESLintエラーを修正
+- `npm run format` - Prettierでコードをフォーマット
+- `npm run format:check` - Prettierフォーマットをチェック
 
-### Pre-commit Hooks (Husky + lint-staged)
-- Automatic ESLint fixing
-- Automatic Prettier formatting
-- Applied to `*.{js,jsx,ts,tsx,json,md}` files
+### プリコミットフック（Husky + lint-staged）
+- 自動ESLint修正
+- 自動Prettierフォーマット
+- `*.{js,jsx,ts,tsx,json,md}`ファイルに適用
 
-## Environment Setup
+## 環境設定
 
-### Required Environment Variables
+### 必要な環境変数
 ```env
-# Database
+# データベース
 DATABASE_URL="your-database-url"
 
 # NextAuth
 NEXTAUTH_SECRET="your-secret"
 NEXTAUTH_URL="http://localhost:3000"
 
-# Add other environment variables as needed
+# 必要に応じて他の環境変数を追加
 ```
 
-### Node.js Version
-- Use Node.js 18.x or later (check `.nvmrc` file)
+### Node.jsバージョン
+- Node.js 18.x以降を使用（`.nvmrc`ファイルを確認）
 
-## Code Review Checklist
-- [ ] Code follows Prettier formatting (auto-formatted)
-- [ ] No ESLint errors or warnings
-- [ ] Proper TypeScript typing (no `any`)
-- [ ] Error handling implemented
-- [ ] Zod validation for user inputs
-- [ ] React Query for server state management
-- [ ] Proper file organization in `src/` structure
-- [ ] NextAuth.js for authentication
-- [ ] Prisma for database operations
-- [ ] Tests written/updated (when test framework is added)
+## コードレビューチェックリスト
+- [ ] Prettierフォーマットに従っている（自動フォーマット済み）
+- [ ] ESLintエラーや警告がない
+- [ ] 適切なTypeScript型付け（`any`なし）
+- [ ] エラーハンドリングが実装されている
+- [ ] ユーザー入力のZodバリデーション
+- [ ] サーバー状態管理にReact Query
+- [ ] `src/`構造での適切なファイル組織
+- [ ] 認証にNextAuth.js
+- [ ] データベース操作にPrisma
+- [ ] テストが記述/更新されている（テストフレームワーク追加時）
 
-## Files to Always Ignore
+## 常に無視するファイル
 - `.next/`
 - `node_modules/`
 - `.git/`
@@ -382,7 +426,7 @@ NEXTAUTH_URL="http://localhost:3000"
 - `.env.local`
 - `.env`
 
-## Key Dependencies Version Compatibility
+## 主要依存関係のバージョン互換性
 - **Next.js**: 15.3.2
 - **React**: 19.0.0  
 - **TypeScript**: 5.x
@@ -391,4 +435,4 @@ NEXTAUTH_URL="http://localhost:3000"
 - **TanStack React Query**: 5.76.1
 - **Tailwind CSS**: 4.x
 
-Always prioritize code quality, maintainability, type safety, and user experience in your implementations. Follow the existing project patterns and maintain consistency with the established codebase structure. 
+実装では常にコード品質、保守性、型安全性、ユーザーエクスペリエンスを優先してください。既存のプロジェクトパターンに従い、確立されたコードベース構造との一貫性を保ってください。

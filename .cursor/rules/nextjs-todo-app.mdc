@@ -1,24 +1,24 @@
 ---
-description: 
-globs: 
+description:
+globs:
 alwaysApply: false
 ---
-# Next.js Todo Application Development Rules
+# Next.js Todoアプリケーション開発ルール
 
-You are an expert Next.js developer working on a todo application. Follow these rules strictly when generating, editing, or reviewing code.
+あなたはTodoアプリケーションに取り組むエキスパートNext.js開発者です。コードの生成、編集、レビューの際は、これらのルールを厳密に守ってください。
 
-## Project Context
+## プロジェクトコンテキスト
 - Next.js 15+ with App Router
 - TypeScript strict mode
-- Prisma ORM for database
-- NextAuth.js for authentication
-- React Hook Form + Zod for form validation
-- Tailwind CSS for styling
-- React Query for state management
+- Prisma ORM（データベース用）
+- NextAuth.js（認証用）
+- React Hook Form + Zod（フォームバリデーション用）
+- Tailwind CSS（スタイリング用）
+- React Query（状態管理用）
 
-## Code Style & Formatting
+## コードスタイル & フォーマット
 
-### Prettier Configuration (Auto-format with these rules)
+### Prettier設定（これらのルールで自動フォーマット）
 ```json
 {
   "printWidth": 100,
@@ -35,31 +35,31 @@ You are an expert Next.js developer working on a todo application. Follow these 
 }
 ```
 
-### ESLint Rules to Follow
-- Always fix ESLint errors before submitting code
-- Prefer const over let when possible
-- Remove unused variables (prefix with _ if intentionally unused)
-- Use meaningful variable and function names
-- Avoid any type, use proper TypeScript types
-- Don't import React in JSX files (Next.js handles this)
+### 従うべきESLintルール
+- コード提出前に常にESLintエラーを修正する
+- 可能な限りletよりもconstを選択する
+- 未使用の変数を削除する（意図的に未使用の場合は_を接頭辞にする）
+- 意味のある変数名と関数名を使用する
+- any型を避け、適切なTypeScript型を使用する
+- JSXファイルでReactをインポートしない（Next.jsが処理する）
 
-## TypeScript Guidelines
+## TypeScriptガイドライン
 
-### Type Definitions
-- Create interface/type definitions in separate files when shared
-- Use strict typing, avoid any
-- Prefer type unions over enums when appropriate
-- Use const assertions for readonly data
-- Export types from a central types/ directory
+### 型定義
+- 共有される場合は別ファイルでinterface/type定義を作成する
+- 厳密な型付けを使用し、anyを避ける
+- 適切な場合はenumよりもtype unionsを選択する
+- 読み取り専用データにはconst assertionsを使用する
+- 中央のtypes/ディレクトリから型をエクスポートする
 
-### Function Signatures
-- Use explicit return types for complex functions
-- Prefer arrow functions for simple callbacks
-- Use function declarations for main component functions
+### 関数シグネチャ
+- 複雑な関数には明示的な戻り値の型を使用する
+- シンプルなコールバックにはアロー関数を選択する
+- メインコンポーネント関数には関数宣言を使用する
 
-### Example:
+### 例:
 ```typescript
-// Good
+// 良い例
 interface UserProps {
   id: string;
   name: string;
@@ -70,46 +70,46 @@ const UserCard = ({ id, name, email }: UserProps): JSX.Element => {
   return <div>...</div>;
 };
 
-// Bad
+// 悪い例
 const UserCard = (props: any) => {
   return <div>...</div>;
 };
 ```
 
-## React/Next.js Best Practices
+## React/Next.jsベストプラクティス
 
-### Component Structure
-- Use functional components with hooks
-- Keep components small and focused (single responsibility)
-- Extract custom hooks for reusable logic
-- Use React.memo() for expensive components
+### コンポーネント構造
+- フックを使用した関数コンポーネントを使用する
+- コンポーネントを小さく集中的に保つ（単一責任）
+- 再利用可能なロジックのためのカスタムフックを抽出する
+- 重いコンポーネントにはReact.memo()を使用する
 
 ### Next.js App Router
-- Use proper file-based routing conventions
-- Implement loading.tsx and error.tsx pages
-- Use server components by default, client components when needed
-- Leverage Next.js Image component for images
+- 適切なファイルベースルーティング規則を使用する
+- loading.tsxとerror.tsxページを実装する
+- デフォルトでサーバーコンポーネント、必要時にクライアントコンポーネントを使用
+- 画像にはNext.js Imageコンポーネントを活用する
 
-### State Management
-- Use React Query for server state
-- Use React Hook Form for form state
-- Use React context sparingly for truly global state
+### 状態管理
+- サーバー状態にはReact Queryを使用する
+- フォーム状態にはReact Hook Formを使用する
+- 真にグローバルな状態にのみReactコンテキストを慎重に使用する
 
-## API & Database Guidelines
+## API & データベースガイドライン
 
-### API Routes
-- Follow RESTful conventions
-- Use proper HTTP status codes
-- Implement comprehensive error handling
-- Validate requests with Zod schemas
+### APIルート
+- RESTful規則に従う
+- 適切なHTTPステータスコードを使用する
+- 包括的なエラーハンドリングを実装する
+- Zodスキーマでリクエストを検証する
 
-### Database Operations
-- Use Prisma client for all database operations
-- Implement proper error handling
-- Use transactions for related operations
-- Follow database naming conventions (snake_case for tables/columns)
+### データベース操作
+- すべてのデータベース操作にPrismaクライアントを使用する
+- 適切なエラーハンドリングを実装する
+- 関連操作にはトランザクションを使用する
+- データベース命名規則に従う（テーブル/カラムにはsnake_case）
 
-### Example API Route:
+### APIルートの例:
 ```typescript
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
@@ -124,98 +124,98 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const validatedData = createTodoSchema.parse(body);
     
-    // Database operation here
+    // ここにデータベース操作
     
     return NextResponse.json({ success: true }, { status: 201 });
   } catch (error) {
     return NextResponse.json(
-      { error: 'Invalid request data' },
+      { error: '不正なリクエストデータ' },
       { status: 400 }
     );
   }
 }
 ```
 
-## File Organization
+## ファイル組織
 
-### Directory Structure
+### ディレクトリ構造
 ```
 src/
-├── app/                  # Next.js App Router pages
-├── components/           # Reusable UI components
-│   ├── ui/              # Base UI components (shadcn/ui)
-│   └── ...              # Feature-specific components
-├── lib/                 # Utility functions and configurations
-├── hooks/               # Custom React hooks
-├── types/               # TypeScript type definitions
-└── styles/              # Global styles
+├── app/                  # Next.js App Routerページ
+├── components/           # 再利用可能なUIコンポーネント
+│   ├── ui/              # ベースUIコンポーネント（shadcn/ui）
+│   └── ...              # 機能固有のコンポーネント
+├── lib/                 # ユーティリティ関数と設定
+├── hooks/               # カスタムReactフック
+├── types/               # TypeScript型定義
+└── styles/              # グローバルスタイル
 ```
 
-### Naming Conventions
-- Files: kebab-case (user-profile.tsx)
-- Components: PascalCase (UserProfile)
-- Functions/variables: camelCase (getCurrentUser)
-- Constants: UPPER_SNAKE_CASE (API_BASE_URL)
-- Types/Interfaces: PascalCase (UserProfile, ApiResponse)
+### 命名規則
+- ファイル: kebab-case (user-profile.tsx)
+- コンポーネント: PascalCase (UserProfile)
+- 関数/変数: camelCase (getCurrentUser)
+- 定数: UPPER_SNAKE_CASE (API_BASE_URL)
+- 型/インターフェース: PascalCase (UserProfile, ApiResponse)
 
-## Import Organization
+## インポート組織
 ```typescript
-// 1. External libraries
+// 1. 外部ライブラリ
 import React from 'react';
 import { NextRequest } from 'next/server';
 
-// 2. Internal modules (absolute imports preferred)
+// 2. 内部モジュール（絶対インポート推奨）
 import { Button } from '@/components/ui/button';
 import { getCurrentUser } from '@/lib/auth';
 
-// 3. Relative imports
+// 3. 相対インポート
 import './component.css';
 ```
 
-## Error Handling
+## エラーハンドリング
 
-### Client-Side
-- Use error boundaries for component-level errors
-- Implement proper loading and error states
-- Show user-friendly error messages
+### クライアントサイド
+- コンポーネントレベルのエラーにはエラーバウンダリを使用する
+- 適切なローディングとエラー状態を実装する
+- ユーザーフレンドリーなエラーメッセージを表示する
 
-### Server-Side
-- Log errors with sufficient context
-- Return appropriate HTTP status codes
-- Don't expose sensitive information in error messages
+### サーバーサイド
+- 十分なコンテキストでエラーをログに記録する
+- 適切なHTTPステータスコードを返す
+- エラーメッセージで機密情報を公開しない
 
-## Security Best Practices
-- Validate all user inputs (client AND server-side)
-- Use NextAuth.js for authentication
-- Sanitize data before database operations
-- Implement proper authorization checks
-- Use environment variables for sensitive data
+## セキュリティベストプラクティス
+- すべてのユーザー入力を検証する（クライアントANDサーバーサイド）
+- 認証にはNextAuth.jsを使用する
+- データベース操作前にデータをサニタイズする
+- 適切な認可チェックを実装する
+- 機密データには環境変数を使用する
 
-## Performance Optimization
-- Use React.memo() judiciously
-- Implement proper loading states
-- Use Next.js Image component
-- Lazy load components when appropriate
-- Optimize bundle size with dynamic imports
+## パフォーマンス最適化
+- React.memo()を適切に使用する
+- 適切なローディング状態を実装する
+- Next.js Imageコンポーネントを使用する
+- 適切な場合にコンポーネントを遅延読み込みする
+- 動的インポートでバンドルサイズを最適化する
 
-## Testing Guidelines
-- Write unit tests for utility functions
-- Test React components with user interactions
-- Mock external dependencies
-- Maintain reasonable test coverage
-- Use meaningful test descriptions
+## テストガイドライン
+- ユーティリティ関数の単体テストを書く
+- ユーザーインタラクションでReactコンポーネントをテストする
+- 外部依存関係をモックする
+- 合理的なテストカバレッジを維持する
+- 意味のあるテストの説明を使用する
 
-## Code Review Checklist
-- [ ] Code follows formatting rules (Prettier)
-- [ ] No ESLint errors or warnings
-- [ ] Proper TypeScript typing
-- [ ] Error handling implemented
-- [ ] Performance considered
-- [ ] Security implications reviewed
-- [ ] Tests written/updated
-- [ ] Documentation updated if needed
+## コードレビューチェックリスト
+- [ ] コードがフォーマットルールに従っている（Prettier）
+- [ ] ESLintエラーや警告がない
+- [ ] 適切なTypeScript型付け
+- [ ] エラーハンドリングが実装されている
+- [ ] パフォーマンスが考慮されている
+- [ ] セキュリティへの影響がレビュー済み
+- [ ] テストが記述/更新されている
+- [ ] 必要に応じてドキュメントが更新されている
 
-## Files to Ignore in Code Generation
+## コード生成で無視するファイル
 - .next/
 - node_modules/
 - .git/
@@ -225,4 +225,4 @@ import './component.css';
 - .env.local
 - .env
 
-Always prioritize code quality, maintainability, and user experience in your implementations.
+実装では常にコード品質、保守性、ユーザーエクスペリエンスを優先してください。
