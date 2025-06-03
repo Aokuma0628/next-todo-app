@@ -1,9 +1,11 @@
 import NextAuth from 'next-auth';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import CredentialsProvider from 'next-auth/providers/credentials';
+import { NextResponse } from 'next/server';
 import { prisma } from './prisma';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
+import type { ApiResponse } from '@/types';
 
 // ログインスキーマ
 const loginSchema = z.object({
@@ -75,3 +77,38 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
   },
 });
+
+/**
+ * API認証チェック用のヘルパー関数
+ * @returns 認証されたユーザーIDまたはエラーレスポンス
+ */
+export async function requireAuth(): Promise<
+  { success: true; userId: string } | { success: false; response: NextResponse }
+> {
+  try {
+    const session = await auth();
+
+    if (!session?.user?.id) {
+      return {
+        success: false,
+        response: NextResponse.json({ success: false, error: '認証が必要です' } as ApiResponse, {
+          status: 401,
+        }),
+      };
+    }
+
+    return {
+      success: true,
+      userId: session.user.id,
+    };
+  } catch (error) {
+    console.error('認証エラー:', error);
+    return {
+      success: false,
+      response: NextResponse.json(
+        { success: false, error: '認証処理でエラーが発生しました' } as ApiResponse,
+        { status: 500 },
+      ),
+    };
+  }
+}
