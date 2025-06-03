@@ -22,7 +22,7 @@ export function handleApiError(error: unknown, defaultMessage: string): NextResp
 
   // Prismaエラー
   if (error && typeof error === 'object' && 'code' in error) {
-    const prismaError = error as any;
+    const prismaError = error as { code: string; meta?: Record<string, unknown> };
 
     // 一意制約違反
     if (prismaError.code === 'P2002') {
@@ -56,7 +56,7 @@ export function handleApiError(error: unknown, defaultMessage: string): NextResp
 /**
  * 成功レスポンス作成用のヘルパー関数
  */
-export function createApiResponse<T = any>(data?: T, status: number = 200): NextResponse {
+export function createApiResponse<T = unknown>(data?: T, status: number = 200): NextResponse {
   return NextResponse.json(
     {
       success: true,
@@ -72,7 +72,7 @@ export function createApiResponse<T = any>(data?: T, status: number = 200): Next
 export function createApiErrorResponse(
   error: string,
   status: number = 400,
-  details?: any,
+  details?: unknown,
 ): NextResponse {
   return NextResponse.json(
     {

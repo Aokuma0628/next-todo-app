@@ -1,25 +1,25 @@
 import { Priority } from '@prisma/client';
 
 // API Response Types
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
   error?: string;
-  details?: any;
+  details?: unknown;
 }
 
 // Task Types
 export interface Task {
   id: string;
   title: string;
-  description?: string;
+  description: string | null;
   completed: boolean;
   priority: Priority;
-  dueDate?: Date;
+  dueDate: Date | null;
   position: number;
   userId: string;
-  categoryId?: string;
-  category?: Category;
+  categoryId: string | null;
+  category: Category | null;
   tags: Tag[];
   createdAt: Date;
   updatedAt: Date;
