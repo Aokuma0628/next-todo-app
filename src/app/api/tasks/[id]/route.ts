@@ -12,7 +12,7 @@ import { updateTaskSchema, idParamSchema } from '@/lib/validations';
 import type { Task } from '@/types';
 
 // GET /api/tasks/[id] - 個別タスク取得
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     // 認証チェック
     const authResult = await requireAuth();
@@ -21,7 +21,8 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     }
 
     // パラメータの検証
-    const paramResult = parseUrlParams(params, idParamSchema);
+    const resolvedParams = await params;
+    const paramResult = parseUrlParams(resolvedParams, idParamSchema);
     if (!paramResult.success) {
       return paramResult.response;
     }
@@ -50,7 +51,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 }
 
 // PUT /api/tasks/[id] - タスク更新
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     // 認証チェック
     const authResult = await requireAuth();
@@ -59,7 +60,8 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     }
 
     // パラメータの検証
-    const paramResult = parseUrlParams(params, idParamSchema);
+    const resolvedParams = await params;
+    const paramResult = parseUrlParams(resolvedParams, idParamSchema);
     if (!paramResult.success) {
       return paramResult.response;
     }
@@ -148,7 +150,10 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 }
 
 // DELETE /api/tasks/[id] - タスク削除
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
   try {
     // 認証チェック
     const authResult = await requireAuth();
@@ -157,7 +162,8 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     }
 
     // パラメータの検証
-    const paramResult = parseUrlParams(params, idParamSchema);
+    const resolvedParams = await params;
+    const paramResult = parseUrlParams(resolvedParams, idParamSchema);
     if (!paramResult.success) {
       return paramResult.response;
     }

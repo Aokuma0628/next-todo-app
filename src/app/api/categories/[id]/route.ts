@@ -12,7 +12,7 @@ import { updateCategorySchema, idParamSchema } from '@/lib/validations';
 import type { Category } from '@/types';
 
 // GET /api/categories/[id] - 個別カテゴリ取得
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     // 認証チェック
     const authResult = await requireAuth();
@@ -21,7 +21,8 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     }
 
     // パラメータの検証
-    const paramResult = parseUrlParams(params, idParamSchema);
+    const resolvedParams = await params;
+    const paramResult = parseUrlParams(resolvedParams, idParamSchema);
     if (!paramResult.success) {
       return paramResult.response;
     }
@@ -62,7 +63,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 }
 
 // PUT /api/categories/[id] - カテゴリ更新
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     // 認証チェック
     const authResult = await requireAuth();
@@ -71,7 +72,8 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     }
 
     // パラメータの検証
-    const paramResult = parseUrlParams(params, idParamSchema);
+    const resolvedParams = await params;
+    const paramResult = parseUrlParams(resolvedParams, idParamSchema);
     if (!paramResult.success) {
       return paramResult.response;
     }
@@ -137,7 +139,10 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 }
 
 // DELETE /api/categories/[id] - カテゴリ削除
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
   try {
     // 認証チェック
     const authResult = await requireAuth();
@@ -146,7 +151,8 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     }
 
     // パラメータの検証
-    const paramResult = parseUrlParams(params, idParamSchema);
+    const resolvedParams = await params;
+    const paramResult = parseUrlParams(resolvedParams, idParamSchema);
     if (!paramResult.success) {
       return paramResult.response;
     }
