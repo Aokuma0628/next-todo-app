@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Todo - バニラJS版</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        .slide-in {
+            animation: slideIn 0.3s ease-out forwards;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.2s ease-out forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body class="min-h-screen transition-all duration-300 bg-gradient-to-br from-gray-50 via-stone-50 to-slate-50" id="body">
+    <!-- ヘッダー -->
+    <header class="backdrop-blur-md border-b transition-all duration-300 bg-white/80 border-stone-200/60" id="header">
+        <div class="max-w-4xl mx-auto px-6 py-5">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 bg-stone-100 border border-stone-200" id="logo-container">
+                        <i data-lucide="check-square" class="h-5 w-5 text-stone-700"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-semibold transition-colors duration-300 text-stone-800">Todo</h1>
+                        <p class="text-sm transition-colors duration-300 text-stone-500">シンプルなタスク管理</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="theme-toggle" class="p-2 rounded-md transition-all duration-300 text-stone-500 hover:text-stone-700 hover:bg-stone-100">
+                        <i data-lucide="moon" class="h-4 w-4" id="theme-icon"></i>
+                    </button>
+                    <button class="flex items-center gap-2 p-2 rounded-md transition-all duration-300 text-stone-500 hover:text-stone-700 hover:bg-stone-100">
+                        <i data-lucide="user" class="h-4 w-4"></i>
+                        <span class="text-sm">ログアウト</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main class="max-w-4xl mx-auto px-6 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- 統計情報 -->
+            <div class="lg:col-span-1 space-y-4">
+                <!-- 完了率カード -->
+                <div class="transition-all duration-300 hover:shadow-md bg-white/90 border border-stone-200/60 shadow-sm rounded-lg" id="completion-card">
+                    <div class="p-6">
+                        <div class="text-center space-y-4">
+                            <div class="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-emerald-50 border border-emerald-200/40">
+                                <i data-lucide="target" class="h-7 w-7 text-emerald-600"></i>
+                            </div>
+                            <div>
+                                <div class="text-3xl font-semibold" id="completion-rate">0%</div>
+                                <p class="text-sm text-stone-500">完了率</p>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 pt-4">
+                                <div class="text-center">
+                                    <div class="text-xl font-medium" id="completed-count">0</div>
+                                    <p class="text-xs text-stone-400">完了済み</p>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-xl font-medium" id="remaining-count">0</div>
+                                    <p class="text-xs text-stone-400">残りタスク</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 今日のタスクカード -->
+                <div class="transition-all duration-300 hover:shadow-md bg-white/90 border border-stone-200/60 shadow-sm rounded-lg" id="today-card">
+                    <div class="p-6">
+                        <div class="flex items-center gap-3 mb-4">
+                            <i data-lucide="calendar" class="h-5 w-5 text-stone-500"></i>
+                            <h3 class="font-medium">今日のタスク</h3>
+                        </div>
+                        <div class="text-2xl font-semibold mb-2" id="today-count">0</div>
+                        <p class="text-sm text-stone-500">今日作成されたタスク</p>
+                    </div>
+                </div>
+
+                <!-- カテゴリ別統計 -->
+                <div class="transition-all duration-300 hover:shadow-md bg-white/90 border border-stone-200/60 shadow-sm rounded-lg" id="category-stats-card">
+                    <div class="p-6">
+                        <div class="flex items-center gap-3 mb-4">
+                            <i data-lucide="folder-open" class="h-5 w-5 text-stone-500"></i>
+                            <h3 class="font-medium">カテゴリ別</h3>
+                        </div>
+                        <div class="space-y-3" id="category-stats">
+                            <!-- カテゴリ統計がここに動的に生成されます -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- タスク管理エリア -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- タスク作成フォーム -->
+                <div class="transition-all duration-300 hover:shadow-md bg-white/90 border border-stone-200/60 shadow-sm rounded-lg" id="create-form-card">
+                    <div class="p-6 border-b border-stone-200/60">
+                        <h2 class="flex items-center gap-3 text-lg text-stone-800">
+                            <div class="p-2 rounded-lg bg-stone-100 border border-stone-200">
+                                <i data-lucide="plus" class="h-4 w-4 text-stone-600"></i>
+                            </div>
+                            新しいタスクを作成
+                        </h2>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <div>
+                            <input
+                                type="text"
+                                id="new-title"
+                                placeholder="何に取り組みますか？"
+                                class="w-full px-3 py-2 text-base transition-all duration-300 bg-stone-50/50 border border-stone-300 rounded-md focus:border-stone-400 focus:outline-none focus:ring-1 focus:ring-stone-400"
+                            />
+                        </div>
+                        <div>
+                            <select
+                                id="new-category"
+                                class="w-full px-3 py-2 rounded-md border text-sm transition-all duration-300 bg-stone-50/50 border-stone-300 focus:border-stone-400 focus:outline-none focus:ring-1 focus:ring-stone-400"
+                            >
+                                <option value="work">🧳 仕事</option>
+                                <option value="personal">🏠 プライベート</option>
+                                <option value="health">❤️ 健康</option>
+                                <option value="study">📚 学習</option>
+                                <option value="other">📁 その他</option>
+                            </select>
+                        </div>
+                        <div>
+                            <textarea
+                                id="new-description"
+                                placeholder="詳細や注意事項があれば..."
+                                rows="3"
+                                class="w-full px-3 py-2 resize-none transition-all duration-300 bg-stone-50/50 border border-stone-300 rounded-md focus:border-stone-400 focus:outline-none focus:ring-1 focus:ring-stone-400"
+                            ></textarea>
+                        </div>
+                        <button
+                            id="add-todo-btn"
+                            class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-md transition-all duration-300 bg-stone-700 hover:bg-stone-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                            disabled
+                        >
+                            <i data-lucide="plus" class="h-4 w-4"></i>
+                            タスクを追加
+                        </button>
+                    </div>
+                </div>
+
+                <!-- タスク一覧 -->
+                <div class="space-y-3" id="todos-container">
+                    <!-- 空状態メッセージ -->
+                    <div class="transition-all duration-300 bg-white/90 border border-stone-200/60 shadow-sm rounded-lg" id="empty-state">
+                        <div class="py-16 text-center">
+                            <div class="inline-flex items-center justify-center w-14 h-14 rounded-xl mb-4 bg-stone-100 border border-stone-200">
+                                <i data-lucide="circle" class="h-7 w-7 text-stone-400"></i>
+                            </div>
+                            <p class="text-lg font-medium mb-2 text-stone-600">まだタスクがありません</p>
+                            <p class="text-sm text-stone-400">上のフォームから新しいタスクを追加してスタートしましょう</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- フッター統計 -->
+                <div class="transition-all duration-300 bg-white/90 border border-stone-200/60 shadow-sm rounded-lg hidden" id="footer-stats">
+                    <div class="p-6 text-center">
+                        <div class="flex items-center justify-center gap-3 mb-3">
+                            <i data-lucide="trending-up" class="h-5 w-5 text-stone-500"></i>
+                            <h3 class="font-medium text-stone-800">今日の進捗</h3>
+                        </div>
+                        <p class="text-base text-stone-600" id="progress-message">
+                            タスクを追加して進捗を確認しましょう
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // カテゴリ定義
+        const CATEGORIES = {
+            work: {
+                id: 'work',
+                name: '仕事',
+                icon: 'briefcase',
+                emoji: '🧳',
+                color: {
+                    light: 'bg-blue-100 text-blue-700 border-blue-200',
+                    dark: 'bg-blue-900/30 text-blue-400 border-blue-800/30'
+                }
+            },
+            personal: {
+                id: 'personal',
+                name: 'プライベート',
+                icon: 'home',
+                emoji: '🏠',
+                color: {
+                    light: 'bg-green-100 text-green-700 border-green-200',
+                    dark: 'bg-green-900/30 text-green-400 border-green-800/30'
+                }
+            },
+            health: {
+                id: 'health',
+                name: '健康',
+                icon: 'heart',
+                emoji: '❤️',
+                color: {
+                    light: 'bg-red-100 text-red-700 border-red-200',
+                    dark: 'bg-red-900/30 text-red-400 border-red-800/30'
+                }
+            },
+            study: {
+                id: 'study',
+                name: '学習',
+                icon: 'book-open',
+                emoji: '📚',
+                color: {
+                    light: 'bg-purple-100 text-purple-700 border-purple-200',
+                    dark: 'bg-purple-900/30 text-purple-400 border-purple-800/30'
+                }
+            },
+            other: {
+                id: 'other',
+                name: 'その他',
+                icon: 'folder-open',
+                emoji: '📁',
+                color: {
+                    light: 'bg-gray-100 text-gray-700 border-gray-200',
+                    dark: 'bg-gray-900/30 text-gray-400 border-gray-800/30'
+                }
+            }
+        };
+
+        // 状態管理
+        let todos = [
+            {
+                id: '1',
+                title: '新しいプロジェクトの企画書を作成',
+                description: 'UI/UXデザインの改善案とマーケティング戦略を含める',
+                completed: false,
+                createdAt: new Date('2024-12-06T08:30:00'),
+                category: 'work',
+            },
+            {
+                id: '2',
+                title: 'チームミーティングの準備',
+                description: 'アジェンダ作成、資料準備、会議室予約',
+                completed: true,
+                createdAt: new Date('2024-12-05T14:00:00'),
+                category: 'work',
+            },
+            {
+                id: '3',
+                title: 'フィットネスクラスに参加',
+                description: 'ヨガクラス 19:00-20:00',
+                completed: false,
+                createdAt: new Date('2024-12-06T10:15:00'),
+                category: 'health',
+            },
+            {
+                id: '4',
+                title: 'コードレビューを完了',
+                completed: false,
+                createdAt: new Date('2024-12-06T11:00:00'),
+                category: 'work',
+            },
+        ];
+        
+        let isDark = false;
+
+        // DOM要素
+        const body = document.getElementById('body');
+        const header = document.getElementById('header');
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const newTitle = document.getElementById('new-title');
+        const newDescription = document.getElementById('new-description');
+        const newCategory = document.getElementById('new-category');
+        const addTodoBtn = document.getElementById('add-todo-btn');
+        const todosContainer = document.getElementById('todos-container');
+        const emptyState = document.getElementById('empty-state');
+
+        // 初期化
+        function init() {
+            updateUI();
+            bindEvents();
+            // 初期テーマ適用
+            updateTheme();
+            // Lucide iconsを初期化
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }
+
+        // イベントバインディング
+        function bindEvents() {
+            themeToggle.addEventListener('click', toggleTheme);
+            addTodoBtn.addEventListener('click', addTodo);
+            newTitle.addEventListener('input', updateAddButton);
+            newTitle.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    addTodo();
+                }
+            });
+        }
+
+        // テーマ切り替え
+        function toggleTheme() {
+            isDark = !isDark;
+            updateTheme();
+        }
+
+        function updateTheme() {
+            // ボディのクラス更新
+            if (isDark) {
+                body.className = 'min-h-screen transition-all duration-300 bg-gradient-to-br from-slate-900 via-gray-900 to-zinc-900';
+                header.className = 'backdrop-blur-md border-b transition-all duration-300 bg-slate-900/60 border-slate-700/50';
+            } else {
+                body.className = 'min-h-screen transition-all duration-300 bg-gradient-to-br from-gray-50 via-stone-50 to-slate-50';
+                header.className = 'backdrop-blur-md border-b transition-all duration-300 bg-white/80 border-stone-200/60';
+            }
+            
+            // ロゴコンテナの更新
+            const logoContainer = document.getElementById('logo-container');
+            const logoIcon = logoContainer.querySelector('i');
+            if (isDark) {
+                logoContainer.className = 'w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 bg-slate-700 border border-slate-600';
+                logoIcon.className = 'h-5 w-5 text-slate-300';
+            } else {
+                logoContainer.className = 'w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 bg-stone-100 border border-stone-200';
+                logoIcon.className = 'h-5 w-5 text-stone-700';
+            }
+            
+            // ヘッダーテキストの更新
+            const headerTitle = document.querySelector('header h1');
+            const headerSubtitle = document.querySelector('header p');
+            if (isDark) {
+                headerTitle.className = 'text-2xl font-semibold transition-colors duration-300 text-slate-100';
+                headerSubtitle.className = 'text-sm transition-colors duration-300 text-slate-400';
+            } else {
+                headerTitle.className = 'text-2xl font-semibold transition-colors duration-300 text-stone-800';
+                headerSubtitle.className = 'text-sm transition-colors duration-300 text-stone-500';
+            }
+            
+            // ヘッダーボタンの更新
+            const headerButtons = document.querySelectorAll('header button');
+            headerButtons.forEach(btn => {
+                if (isDark) {
+                    btn.className = btn.className.replace(/text-stone-\d+ hover:text-stone-\d+ hover:bg-stone-\d+/, 'text-slate-400 hover:text-slate-200 hover:bg-slate-800');
+                } else {
+                    btn.className = btn.className.replace(/text-slate-\d+ hover:text-slate-\d+ hover:bg-slate-\d+/, 'text-stone-500 hover:text-stone-700 hover:bg-stone-100');
+                }
+            });
+            
+            // テーマアイコン更新
+            themeIcon.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+            
+            // アイコンを再初期化
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+            
+            updateUI();
+        }
+
+        // 追加ボタンの状態更新
+        function updateAddButton() {
+            const hasTitle = newTitle.value.trim().length > 0;
+            addTodoBtn.disabled = !hasTitle;
+        }
+
+        // タスク追加
+        function addTodo() {
+            const title = newTitle.value.trim();
+            if (!title) return;
+
+            const newTodo = {
+                id: Date.now().toString(),
+                title: title,
+                description: newDescription.value.trim() || undefined,
+                completed: false,
+                createdAt: new Date(),
+                category: newCategory.value,
+            };
+
+            todos.unshift(newTodo);
+            
+            // フォームリセット
+            newTitle.value = '';
+            newDescription.value = '';
+            newCategory.value = 'work';
+            updateAddButton();
+            
+            updateUI();
+        }
+
+        // タスク完了状態切り替え
+        function toggleTodo(id) {
+            todos = todos.map(todo => 
+                todo.id === id ? { ...todo, completed: !todo.completed } : todo
+            );
+            updateUI();
+        }
+
+        // タスク削除
+        function deleteTodo(id) {
+            todos = todos.filter(todo => todo.id !== id);
+            updateUI();
+        }
+
+        // UI更新
+        function updateUI() {
+            updateStats();
+            renderTodos();
+            updateFooterStats();
+        }
+
+        // 統計更新
+        function updateStats() {
+            const completedCount = todos.filter(todo => todo.completed).length;
+            const totalCount = todos.length;
+            const completionRate = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+            
+            document.getElementById('completion-rate').textContent = `${completionRate}%`;
+            
+            const completedCountEl = document.getElementById('completed-count');
+            const remainingCountEl = document.getElementById('remaining-count');
+            
+            completedCountEl.textContent = completedCount;
+            remainingCountEl.textContent = totalCount - completedCount;
+            
+            // 完了カウントの色設定
+            if (isDark) {
+                completedCountEl.className = 'text-xl font-medium text-emerald-300';
+                remainingCountEl.className = 'text-xl font-medium text-slate-300';
+            } else {
+                completedCountEl.className = 'text-xl font-medium text-emerald-600';
+                remainingCountEl.className = 'text-xl font-medium text-stone-600';
+            }
+
+            // 今日のタスク
+            const today = new Date();
+            const todayTasks = todos.filter(todo => {
+                const taskDate = new Date(todo.createdAt);
+                return taskDate.toDateString() === today.toDateString();
+            });
+            document.getElementById('today-count').textContent = todayTasks.length;
+
+            // カード要素のダークモード対応
+            updateCardsTheme();
+            
+            // エメラルド要素の更新
+            const emeraldContainer = document.querySelector('.bg-emerald-50');
+            const emeraldIcon = document.querySelector('[data-lucide="target"]');
+            if (emeraldContainer && emeraldIcon) {
+                if (isDark) {
+                    emeraldContainer.className = 'inline-flex items-center justify-center w-14 h-14 rounded-xl bg-emerald-900/30 border border-emerald-800/30';
+                    emeraldIcon.className = 'h-7 w-7 text-emerald-400';
+                } else {
+                    emeraldContainer.className = 'inline-flex items-center justify-center w-14 h-14 rounded-xl bg-emerald-50 border border-emerald-200/40';
+                    emeraldIcon.className = 'h-7 w-7 text-emerald-600';
+                }
+            }
+
+            // カテゴリ別統計
+            updateCategoryStats();
+        }
+
+        // カードのテーマ更新
+        function updateCardsTheme() {
+            const cards = document.querySelectorAll('#completion-card, #today-card, #category-stats-card, #create-form-card, #empty-state, #footer-stats');
+            
+            cards.forEach(card => {
+                if (isDark) {
+                    // ライトモードのクラスを削除してダークモードを追加
+                    card.className = card.className
+                        .replace(/bg-white\/90/g, 'bg-slate-800/50')
+                        .replace(/border-stone-200\/60/g, 'border-slate-700/50')
+                        .replace(/text-slate-100/g, 'text-slate-100') // 念のため
+                        + (card.className.includes('text-slate-100') ? '' : ' text-slate-100');
+                } else {
+                    // ダークモードのクラスを削除してライトモードを追加
+                    card.className = card.className
+                        .replace(/bg-slate-800\/50/g, 'bg-white/90')
+                        .replace(/border-slate-700\/50/g, 'border-stone-200/60')
+                        .replace(/text-slate-100/g, '');
+                }
+            });
+
+            // テキスト要素の更新
+            const textElements = document.querySelectorAll('h3, p:not(#progress-message)');
+            textElements.forEach(el => {
+                if (isDark) {
+                    if (el.classList.contains('text-stone-800')) {
+                        el.className = el.className.replace('text-stone-800', 'text-slate-100');
+                    }
+                    if (el.classList.contains('text-stone-500')) {
+                        el.className = el.className.replace('text-stone-500', 'text-slate-400');
+                    }
+                    if (el.classList.contains('text-stone-600')) {
+                        el.className = el.className.replace('text-stone-600', 'text-slate-300');
+                    }
+                    if (el.classList.contains('text-stone-400')) {
+                        el.className = el.className.replace('text-stone-400', 'text-slate-500');
+                    }
+                } else {
+                    if (el.classList.contains('text-slate-100')) {
+                        el.className = el.className.replace('text-slate-100', 'text-stone-800');
+                    }
+                    if (el.classList.contains('text-slate-400')) {
+                        el.className = el.className.replace('text-slate-400', 'text-stone-500');
+                    }
+                    if (el.classList.contains('text-slate-300')) {
+                        el.className = el.className.replace('text-slate-300', 'text-stone-600');
+                    }
+                    if (el.classList.contains('text-slate-500')) {
+                        el.className = el.className.replace('text-slate-500', 'text-stone-400');
+                    }
+                }
+            });
+
+            // フォーム要素の更新
+            const inputs = document.querySelectorAll('input, textarea, select');
+            inputs.forEach(input => {
+                if (isDark) {
+                    input.className = input.className
+                        .replace(/bg-stone-50\/50/g, 'bg-slate-900/50')
+                        .replace(/border-stone-300/g, 'border-slate-600')
+                        .replace(/focus:border-stone-400/g, 'focus:border-slate-400');
+                    
+                    // テキスト色とプレースホルダー色を追加
+                    if (!input.className.includes('text-slate-100')) {
+                        input.className += ' text-slate-100 placeholder:text-slate-400';
+                    }
+                } else {
+                    input.className = input.className
+                        .replace(/bg-slate-900\/50/g, 'bg-stone-50/50')
+                        .replace(/border-slate-600/g, 'border-stone-300')
+                        .replace(/focus:border-slate-400/g, 'focus:border-stone-400')
+                        .replace(/text-slate-100/g, '')
+                        .replace(/placeholder:text-slate-400/g, '');
+                }
+            });
+
+            // 追加ボタンの更新
+            const addBtn = document.getElementById('add-todo-btn');
+            if (isDark) {
+                addBtn.className = addBtn.className
+                    .replace(/bg-stone-700/g, 'bg-slate-700')
+                    .replace(/hover:bg-stone-600/g, 'hover:bg-slate-600')
+                    .replace(/text-white/g, 'text-slate-100');
+                
+                if (!addBtn.className.includes('border-slate-600')) {
+                    addBtn.className += ' border border-slate-600';
+                }
+            } else {
+                addBtn.className = addBtn.className
+                    .replace(/bg-slate-700/g, 'bg-stone-700')
+                    .replace(/hover:bg-slate-600/g, 'hover:bg-stone-600')
+                    .replace(/text-slate-100/g, 'text-white')
+                    .replace(/border border-slate-600/g, '');
+            }
+
+            // プログレスメッセージの更新
+            const progressMessage = document.getElementById('progress-message');
+            if (progressMessage) {
+                if (isDark) {
+                    progressMessage.className = 'text-base text-slate-300';
+                } else {
+                    progressMessage.className = 'text-base text-stone-600';
+                }
+            }
+        }
+
+        // カテゴリ別統計更新
+        function updateCategoryStats() {
+            const categoryStatsContainer = document.getElementById('category-stats');
+            
+            const categoryStats = Object.values(CATEGORIES).map(category => {
+                const categoryTodos = todos.filter(todo => todo.category === category.id);
+                const completed = categoryTodos.filter(todo => todo.completed).length;
+                return {
+                    category,
+                    total: categoryTodos.length,
+                    completed,
+                };
+            }).filter(stat => stat.total > 0);
+
+            if (categoryStats.length === 0) {
+                categoryStatsContainer.innerHTML = '<p class="text-sm text-stone-400">カテゴリ別の統計はタスクを追加すると表示されます</p>';
+                return;
+            }
+
+            categoryStatsContainer.innerHTML = categoryStats.map(({ category, total, completed }) => {
+                const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+                return `
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <span>${category.emoji}</span>
+                            <span class="text-sm font-medium">${category.name}</span>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm font-medium">${completed}/${total}</div>
+                            <div class="text-xs ${isDark ? 'text-slate-500' : 'text-stone-400'}">${percentage}%</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // タスク一覧レンダリング
+        function renderTodos() {
+            // 既存のタスクカードを全て削除（空状態以外）
+            const existingTodos = todosContainer.querySelectorAll('div:not(#empty-state)');
+            existingTodos.forEach(el => el.remove());
+
+            if (todos.length === 0) {
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            
+            const todosHTML = todos.map((todo, index) => {
+                const category = CATEGORIES[todo.category];
+                const completedClass = todo.completed ? 
+                    (isDark ? 'bg-slate-800/30 border-slate-700/30' : 'bg-emerald-50/60 border-emerald-200/40') :
+                    (isDark ? 'bg-slate-800/50 border-slate-700/50' : 'bg-white/90 border-stone-200/60 shadow-sm');
+                
+                const titleClass = todo.completed ?
+                    (isDark ? 'text-slate-500 line-through' : 'text-stone-400 line-through') :
+                    (isDark ? 'text-slate-100' : 'text-stone-800');
+                
+                const descClass = todo.completed ?
+                    (isDark ? 'text-slate-600 line-through' : 'text-stone-400 line-through') :
+                    (isDark ? 'text-slate-400' : 'text-stone-600');
+
+                return `
+                    <div class="transition-all duration-300 hover:shadow-md ${completedClass} rounded-lg slide-in todo-card" style="animation-delay: ${index * 0.05}s">
+                        <div class="p-5">
+                            <div class="flex items-start gap-4">
+                                <button 
+                                    onclick="toggleTodo('${todo.id}')"
+                                    class="mt-1 transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-stone-400 focus:ring-offset-2 rounded-full"
+                                >
+                                    <i data-lucide="${todo.completed ? 'check-circle-2' : 'circle'}" 
+                                       class="h-5 w-5 ${todo.completed ? 
+                                         (isDark ? 'text-emerald-400' : 'text-emerald-600') :
+                                         (isDark ? 'text-slate-500 hover:text-slate-300' : 'text-stone-400 hover:text-stone-600')
+                                       }"></i>
+                                </button>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="font-medium text-lg transition-all duration-200 ${titleClass}">
+                                        ${todo.title}
+                                    </h3>
+                                    ${todo.description ? `
+                                        <p class="text-sm mt-2 transition-all duration-200 ${descClass}">
+                                            ${todo.description}
+                                        </p>
+                                    ` : ''}
+                                    <div class="flex items-center gap-2 mt-3">
+                                        <span class="text-xs flex items-center gap-1 px-2 py-1 rounded-md border ${
+                                            isDark ? category.color.dark : category.color.light
+                                        }">
+                                            ${category.emoji} ${category.name}
+                                        </span>
+                                        <span class="text-xs px-2 py-1 rounded-md border ${
+                                            isDark ? 'bg-slate-700/50 text-slate-400 border-slate-600/50' : 'bg-stone-100 text-stone-500 border-stone-200'
+                                        }">
+                                            ${new Date(todo.createdAt).toLocaleDateString('ja-JP', {
+                                                month: 'short',
+                                                day: 'numeric',
+                                                hour: '2-digit',
+                                                minute: '2-digit'
+                                            })}
+                                        </span>
+                                        ${todo.completed ? `
+                                            <span class="text-xs px-2 py-1 rounded-md border ${
+                                                isDark ? 'bg-emerald-900/30 text-emerald-400 border-emerald-800/30' : 'bg-emerald-100 text-emerald-700 border-emerald-200'
+                                            }">
+                                                完了
+                                            </span>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                                <button
+                                    onclick="deleteTodo('${todo.id}')"
+                                    class="p-2 rounded-md transition-all duration-200 ${
+                                        isDark ? 'text-slate-500 hover:text-red-400 hover:bg-red-900/20' : 'text-stone-400 hover:text-red-600 hover:bg-red-50'
+                                    }"
+                                >
+                                    <i data-lucide="trash-2" class="h-4 w-4"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // 空状態の後にタスクを挿入
+            emptyState.insertAdjacentHTML('afterend', todosHTML);
+            
+            // アイコンを再初期化
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }
+
+        // フッター統計更新
+        function updateFooterStats() {
+            const footerStats = document.getElementById('footer-stats');
+            const progressMessage = document.getElementById('progress-message');
+            
+            if (todos.length === 0) {
+                footerStats.classList.add('hidden');
+                return;
+            }
+
+            footerStats.classList.remove('hidden');
+            
+            const completedCount = todos.filter(todo => todo.completed).length;
+            const totalCount = todos.length;
+            
+            if (completedCount === totalCount && totalCount > 0) {
+                progressMessage.textContent = '🎉 素晴らしい！すべてのタスクが完了しました！';
+            } else {
+                progressMessage.textContent = `あと${totalCount - completedCount}個のタスクで今日の目標達成です`;
+            }
+        }
+
+        // ページ読み込み完了時に初期化
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html> 
