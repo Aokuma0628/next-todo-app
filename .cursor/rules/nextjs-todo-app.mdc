@@ -1,6 +1,6 @@
 ---
-description:
-globs:
+description: 
+globs: 
 alwaysApply: false
 ---
 # Next.js Todoアプリケーション開発ルール
