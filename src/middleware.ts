@@ -6,10 +6,19 @@ export default auth(req => {
   const isLoggedIn = !!req.auth;
 
   // 認証が必要なルート
-  const protectedRoutes = ['/dashboard', '/tasks', '/profile'];
+  const protectedRoutes = ['/todo'];
 
   // 認証済みユーザーがアクセスできないルート（ログイン、登録ページなど）
   const authRoutes = ['/auth/signin', '/auth/signup'];
+
+  // ホームページのリダイレクト
+  if (nextUrl.pathname === '/') {
+    if (isLoggedIn) {
+      return NextResponse.redirect(new URL('/todo', nextUrl));
+    } else {
+      return NextResponse.redirect(new URL('/auth/signin', nextUrl));
+    }
+  }
 
   // 保護されたルートへのアクセス
   if (protectedRoutes.some(route => nextUrl.pathname.startsWith(route))) {
@@ -21,7 +30,7 @@ export default auth(req => {
   // 認証済みユーザーが認証ページにアクセスした場合
   if (authRoutes.includes(nextUrl.pathname)) {
     if (isLoggedIn) {
-      return NextResponse.redirect(new URL('/dashboard', nextUrl));
+      return NextResponse.redirect(new URL('/todo', nextUrl));
     }
   }
 
