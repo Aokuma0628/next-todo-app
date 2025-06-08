@@ -60,7 +60,7 @@ export function LoginForm() {
       if (result?.error) {
         setError('メールアドレスまたはパスワードが正しくありません');
       } else if (result?.ok) {
-        router.push('/dashboard');
+        router.push('/todo');
         router.refresh();
       }
     } catch (error) {

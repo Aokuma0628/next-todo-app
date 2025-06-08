@@ -2,7 +2,6 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTheme } from 'next-themes';
-import { signOut } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -10,7 +9,6 @@ import {
   CheckSquare,
   Moon,
   Sun,
-  User,
   Target,
   Calendar,
   FolderOpen,
@@ -31,6 +29,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { UserProfileMenu } from '@/components/auth/user-profile-menu';
 import { DEFAULT_CATEGORIES } from '@/types/todo-ui';
 import type { TodoTask, TodoStats, CreateTodoForm } from '@/types/todo-ui';
 
@@ -172,11 +171,6 @@ export default function TodoPage() {
     setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
-  // ログアウト処理
-  const handleLogout = async () => {
-    await signOut({ callbackUrl: '/auth/signin' });
-  };
-
   // カテゴリ選択
   const handleCategoryChange = (value: string) => {
     setValue('category', value);
@@ -229,15 +223,7 @@ export default function TodoPage() {
               >
                 {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
               </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleLogout}
-                className="flex items-center gap-2 p-2 rounded-md transition-all duration-300 text-stone-500 hover:text-stone-700 hover:bg-stone-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800"
-              >
-                <User className="h-4 w-4" />
-                <span className="text-sm">ログアウト</span>
-              </Button>
+              <UserProfileMenu />
             </div>
           </div>
         </div>
