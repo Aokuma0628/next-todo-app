@@ -7,9 +7,9 @@ import { redirect } from 'next/navigation';
 export default async function Home() {
   const session = await auth();
 
-  // 既にログインしている場合はダッシュボードにリダイレクト
+  // 既にログインしている場合はTodoページにリダイレクト
   if (session?.user) {
-    redirect('/dashboard');
+    redirect('/todo');
   }
 
   return (

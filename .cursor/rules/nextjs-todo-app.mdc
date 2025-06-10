@@ -1,6 +1,6 @@
 ---
 description: 
-globs: 
+globs: *.tsx,*ts,*json,*md
 alwaysApply: false
 ---
 # Next.js Todoアプリケーション開発ルール
